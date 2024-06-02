@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Activity {
+  id        Int          @id @default(autoincrement())
+  user      User         @relation(fields: [userID], references: [id])
+  userID    Int
+  content   Content      @relation(fields: [contentID], references: [id])
+  contentID Int
+  type      ActivityType @relation(fields: [typeTitle], references: [title])
+  typeTitle String
+}
+
+model ActivityType {
+  title    String     @unique
+  Activity Activity[]
+}
+
+model Author {
+  id       Int       @id @default(autoincrement())
+  name     String
+  contents Content[]
+}
+
+model Content {
+  id          Int              @id @default(autoincrement())
+  type        ContentType      @relation(fields: [typeTitle], references: [title])
+  typeTitle   String
+  genre       ContentGenre     @relation(fields: [genreTitle], references: [title])
+  genreTitle  String
+  author      Author[]
+  rate        Rate[]
+  collections UserCollection[]
+  wishLists   UserWishList[]
+  Activity    Activity[]
+}
+
+model ContentGenre {
+  title     String      @unique
+  type      ContentType @relation(fields: [typeTitle], references: [title])
+  typeTitle String
+  Content   Content[]
+}
+
+model ContentParam {
+  id        Int         @id @default(autoincrement())
+  title     String
+  type      ContentType @relation(fields: [typeTitle], references: [title])
+  typeTitle String
+  rate      Rate        @relation(fields: [rateId], references: [id])
+  rateId    Int
+}
+
+model ContentType {
+  title        String         @unique
+  ContentGenre ContentGenre[]
+  Content      Content[]
+  ContentParam ContentParam[]
+}
+
+model Rate {
+  id        Int            @id @default(autoincrement())
+  user      User           @relation(fields: [userID], references: [id])
+  userID    Int
+  content   Content        @relation(fields: [contentID], references: [id])
+  contentID Int
+  params    ContentParam[]
+  review    String
+}
+
+model User {
+  id         Int             @id @default(autoincrement())
+  firstName  String
+  secondName String
+  nickName   String
+  collection UserCollection?
+  wishList   UserWishList?
+  rate       Rate[]
+  Activity   Activity[]
+}
+
+model UserCollection {
+  id       Int       @id @default(autoincrement())
+  user     User      @relation(fields: [userId], references: [id])
+  userId   Int       @unique
+  contents Content[]
+}
+
+model UserWishList {
+  id       Int       @id @default(autoincrement())
+  user     User      @relation(fields: [userId], references: [id])
+  userId   Int       @unique
+  contents Content[]
+}
