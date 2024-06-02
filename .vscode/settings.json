@@ -1,6 +1,19 @@
 {
     "cSpell.words": [
+        "pkey",
         "typeorm"
     ],
-    "githubIssues.issueBranchTitle": "fava-${issueNumber}"
+    "githubIssues.issueBranchTitle": "fava-${issueNumber}",
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5434,
+            "driver": "PostgreSQL",
+            "name": "Fava",
+            "database": "Fava",
+            "username": "postgres",
+            "password": "Nichi_R"
+        }
+    ],
 }
