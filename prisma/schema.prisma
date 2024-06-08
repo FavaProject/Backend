@@ -79,6 +79,7 @@ model User {
   firstName  String
   secondName String
   nickName   String
+  password   String
   collection UserCollection?
   wishList   UserWishList?
   rate       Rate[]
