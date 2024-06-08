@@ -16,4 +16,6 @@
             "password": "Nichi_R"
         }
     ],
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
