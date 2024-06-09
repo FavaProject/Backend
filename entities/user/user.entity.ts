@@ -1,18 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { User } from '@prisma/client'
 
-export class UserEntity implements User {
+export class UserEntity {
   @ApiProperty()
   id: number
 
   @ApiProperty({ required: false })
-  firstName: string
+  firstName?: string
 
   @ApiProperty({ required: false })
-  secondName: string
+  secondName?: string
 
   @ApiProperty({ required: false })
-  nickName: string
+  nickName?: string
 
   @ApiProperty()
   password: string

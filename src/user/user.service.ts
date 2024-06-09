@@ -1,18 +1,16 @@
 import { Injectable } from '@nestjs/common'
-import { Prisma, User } from '@prisma/client'
 import { compareSync, genSaltSync, hashSync } from 'bcrypt'
 import { PrismaService } from '../prisma/prisma.service'
+import { CreateUserDTO } from 'entities/user/create-user.dto'
+import { UserEntity } from 'entities/user/user.entity'
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  /**
-   * @todo create userDTO by using Swagger
-   */
-  createUser(userData: Prisma.UserCreateInput): Promise<User> {
-    userData.password = this._cryptPassword(userData.password)
-    return this.prisma.user.create({ data: userData })
+  createUser(createUserData: CreateUserDTO): Promise<UserEntity> {
+    createUserData.password = this._cryptPassword(createUserData.password)
+    return this.prisma.user.create({ data: createUserData })
   }
 
   _cryptPassword(password: string): string {
