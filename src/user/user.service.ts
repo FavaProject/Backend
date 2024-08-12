@@ -13,6 +13,24 @@ export class UserService {
     return this.prisma.user.create({ data: createUserData })
   }
 
+  async authUser({ email, password }: CreateUserDTO): Promise<UserEntity> {
+    const finedUser = await this.prisma.user.findFirst({
+      where: { email },
+    })
+
+    if (!finedUser) {
+      throw Error('User not found')
+    }
+
+    const encryptedPassword = finedUser.password
+
+    if (this._comparePassword(password, encryptedPassword)) {
+      return finedUser
+    } else {
+      throw Error('Wrong password')
+    }
+  }
+
   _cryptPassword(password: string): string {
     const salt: string = genSaltSync()
     return hashSync(password, salt)

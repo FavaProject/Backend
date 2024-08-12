@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { UserService } from '../../src/user/user.service'
-import { createUser } from './usersMockData'
+import { createUser, findFirstUser } from './usersMockData'
 import { PrismaService } from '../../src/prisma/prisma.service'
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock'
 
@@ -21,6 +21,11 @@ describe('UserService', () => {
                 .fn()
                 .mockImplementation(createUserData =>
                   createUser(createUserData),
+                ),
+              findFirst: jest
+                .fn()
+                .mockImplementation(searchParams =>
+                  findFirstUser(searchParams),
                 ),
             },
           }
@@ -43,7 +48,7 @@ describe('UserService', () => {
   })
 
   it("Encrypted password shouldn't be equal original", () => {
-    const originalPassword = 'password'
+    const originalPassword = 'adminPassword'
     const encryptedPassword: string =
       userService._cryptPassword(originalPassword)
 
@@ -94,5 +99,30 @@ describe('UserService', () => {
     )
 
     expect(compareWrongPassword).toBe(false)
+  })
+
+  it('Auth input with correct email and password should return user', () => {
+    const email = 'roman.nichi.o@gmail.com'
+    const password = 'adminPassword'
+
+    expect(() => userService.authUser({ email, password })).not.toThrow()
+  })
+
+  it('Auth input with incorrect email should return Error "User not found"', () => {
+    const email = 'wrong.mail@gmail.com'
+    const password = 'adminPassword'
+
+    expect(() => userService.authUser({ email, password })).rejects.toThrow(
+      'User not found',
+    )
+  })
+
+  it('Auth input with incorrect password should return Error "Wrong password"', () => {
+    const email = 'roman.nichi.o@gmail.com'
+    const password = 'wrongPassword'
+
+    expect(() => userService.authUser({ email, password })).rejects.toThrow(
+      'Wrong password',
+    )
   })
 })

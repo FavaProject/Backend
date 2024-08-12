@@ -8,7 +8,7 @@ export const users: UserEntity[] = [
     secondName: 'Ничипуренко',
     nickName: 'Nichi_Ro',
     email: 'roman.nichi.o@gmail.com',
-    password: 'adminPassword',
+    password: '$2b$10$hu5/Bf78UtIq7D2O.kvtLuCeD/WhC4ryMydvLMhuBCXYWkK242Utm',
   },
   {
     id: 1,
@@ -20,19 +20,38 @@ export const users: UserEntity[] = [
   },
 ]
 
-export const createUser = (
-  createUserData: CreateUserDTO,
-): Promise<UserEntity> => {
+export const createUser = (createPrismaParams: {
+  data: CreateUserDTO
+}): Promise<UserEntity> => {
   const encryptedPassword =
     '$2a$10$pVGZ7C2Kr7Vnw4E1WGFAKeqc2GCS25kzGAKMv/Gm9QbpR7XEWobqi'
 
   return new Promise<UserEntity>(resolve => {
     const newUser: UserEntity = {
       id: 0,
-      email: createUserData.email,
+      email: createPrismaParams.data.email,
       password: encryptedPassword,
     }
 
     resolve(newUser)
+  })
+}
+
+export const findFirstUser = (params): Promise<UserEntity> => {
+  return new Promise<UserEntity>(resolve => {
+    const finedUser = users.find(user => {
+      let rightParams = 0
+      const whereParamsCount = Object.keys(params.where).length
+
+      Object.keys(params.where).forEach(param => {
+        if (user[param] === params.where[param]) {
+          rightParams += 1
+        }
+      })
+
+      return rightParams === whereParamsCount
+    })
+
+    resolve(finedUser)
   })
 }
