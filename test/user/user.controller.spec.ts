@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { UserController } from '../../src/user/user.controller'
-import { createUser, findFirstUser } from './usersMockData'
+import { prismaUser } from './usersMockData'
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock'
 import { UserService } from '../../src/user/user.service'
 import { PrismaService } from '../../src/prisma/prisma.service'
-import { UserEntity } from '../../entities/user/user.entity'
 
 const moduleMocker = new ModuleMocker(global)
 
@@ -18,20 +17,7 @@ describe('UserController', () => {
     })
       .useMocker(token => {
         if (token === PrismaService) {
-          return {
-            user: {
-              create: jest
-                .fn()
-                .mockImplementation(createUserData =>
-                  createUser(createUserData),
-                ),
-              findFirst: jest
-                .fn()
-                .mockImplementation(searchParams =>
-                  findFirstUser(searchParams),
-                ),
-            },
-          }
+          return prismaUser
         }
         if (typeof token === 'function') {
           const mockMetadata = moduleMocker.getMetadata(
@@ -51,8 +37,8 @@ describe('UserController', () => {
   })
 
   it('Create user', async () => {
-    const email = 'roman.nichi.o@gmail.com'
-    const password = 'adminPassword'
+    const email = 'new.user@gmail.com'
+    const password = 'newPassword'
     const createdUser = await userController.create({
       email,
       password,

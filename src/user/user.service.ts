@@ -8,15 +8,19 @@ import { UserEntity } from 'entities/user/user.entity'
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  createUser(createUserData: CreateUserDTO): Promise<UserEntity> {
-    createUserData.password = this._cryptPassword(createUserData.password)
-    return this.prisma.user.create({ data: createUserData })
+  async createUser({ email, password }: CreateUserDTO): Promise<UserEntity> {
+    const finedUser = await this._findUserByEmail(email)
+
+    if (finedUser) {
+      throw Error('User already exists')
+    }
+
+    password = this._cryptPassword(password)
+    return this.prisma.user.create({ data: { email, password } })
   }
 
   async authUser({ email, password }: CreateUserDTO): Promise<UserEntity> {
-    const finedUser = await this.prisma.user.findFirst({
-      where: { email },
-    })
+    const finedUser: UserEntity = await this._findUserByEmail(email)
 
     if (!finedUser) {
       throw Error('User not found')
@@ -38,5 +42,9 @@ export class UserService {
 
   _comparePassword(inputPassword, encryptedPassword): boolean {
     return compareSync(inputPassword, encryptedPassword)
+  }
+
+  _findUserByEmail(email: string): Promise<UserEntity> {
+    return this.prisma.user.findFirst({ where: { email } })
   }
 }

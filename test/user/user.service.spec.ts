@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { UserService } from '../../src/user/user.service'
-import { createUser, findFirstUser } from './usersMockData'
+import { prismaUser } from './usersMockData'
 import { PrismaService } from '../../src/prisma/prisma.service'
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock'
 
@@ -15,20 +15,7 @@ describe('UserService', () => {
     })
       .useMocker(token => {
         if (token === PrismaService) {
-          return {
-            user: {
-              create: jest
-                .fn()
-                .mockImplementation(createUserData =>
-                  createUser(createUserData),
-                ),
-              findFirst: jest
-                .fn()
-                .mockImplementation(searchParams =>
-                  findFirstUser(searchParams),
-                ),
-            },
-          }
+          return prismaUser
         }
         if (typeof token === 'function') {
           const mockMetadata = moduleMocker.getMetadata(

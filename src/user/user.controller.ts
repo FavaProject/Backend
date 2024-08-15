@@ -11,7 +11,9 @@ export class UserController {
 
   @Post('create')
   create(@Body() createUserData: CreateUserDTO): Promise<UserEntity> {
-    return this._userService.createUser(createUserData)
+    return this._userService
+      .createUser(createUserData)
+      .catch(err => err.message)
   }
 
   @Get('auth')
