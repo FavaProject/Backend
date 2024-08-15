@@ -71,14 +71,16 @@ model Rate {
   content   Content        @relation(fields: [contentID], references: [id])
   contentID Int
   params    ContentParam[]
-  review    String
+  review    String?
 }
 
 model User {
   id         Int             @id @default(autoincrement())
-  firstName  String
-  secondName String
-  nickName   String
+  firstName  String?        
+  secondName String?
+  nickName   String?
+  email      String
+  password   String
   collection UserCollection?
   wishList   UserWishList?
   rate       Rate[]
